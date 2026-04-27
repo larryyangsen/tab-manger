@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabStash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Header -->
+    <header class="header" id="header">
+      <div class="header-left">
+        <img src="../icons/icon48.png" alt="TabStash" class="header-icon">
+        <h1 class="header-title">TabStash</h1>
+      </div>
+      <button class="icon-btn" id="btn-settings" title="設定">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main View -->
+    <main class="main" id="view-main">
+      <!-- Tab Count Info -->
+      <div class="tab-info" id="tab-info">
+        <div class="tab-info-count">
+          <span class="count-number" id="tab-count">0</span>
+          <span class="count-label">個可收集的分頁</span>
+        </div>
+      </div>
+
+      <!-- Collect Button -->
+      <button class="collect-btn" id="btn-collect">
+        <div class="collect-btn-inner">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          <span>一鍵收集所有分頁</span>
+        </div>
+        <div class="collect-btn-shimmer"></div>
+      </button>
+
+      <!-- Quick Settings -->
+      <div class="quick-settings" id="quick-settings">
+        <label class="toggle-row" id="toggle-exclude-pinned">
+          <span class="toggle-label">排除鎖定分頁</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="setting-exclude-pinned" checked>
+            <span class="toggle-slider"></span>
+          </div>
+        </label>
+        <label class="toggle-row" id="toggle-close-after">
+          <span class="toggle-label">收集後關閉分頁</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="setting-close-after" checked>
+            <span class="toggle-slider"></span>
+          </div>
+        </label>
+      </div>
+
+      <!-- Sessions List -->
+      <div class="sessions-section" id="sessions-section">
+        <div class="sessions-header">
+          <h2 class="sessions-title">已收集的 Sessions</h2>
+          <span class="sessions-count" id="sessions-count">0</span>
+        </div>
+        <div class="search-bar hidden" id="search-bar">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" class="search-input" id="search-input" placeholder="搜尋 session 或分頁名稱...">
+          <button class="search-clear hidden" id="search-clear" title="清除搜尋">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="sessions-list" id="sessions-list">
+          <!-- Sessions will be rendered dynamically -->
+        </div>
+        <div class="sessions-empty" id="sessions-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <p>還沒有收集任何分頁</p>
+          <p class="sessions-empty-hint">點擊上方按鈕開始收集</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Settings View -->
+    <div class="settings-view hidden" id="view-settings">
+      <div class="settings-header">
+        <button class="icon-btn" id="btn-back">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <h2 class="settings-title">設定</h2>
+      </div>
+
+      <div class="settings-content">
+        <div class="settings-group">
+          <h3 class="settings-group-title">雲端同步</h3>
+          <div class="sync-status" id="sync-status">
+            <div class="sync-provider-info">
+              <span class="sync-provider-label" id="sync-provider-label">尚未連接</span>
+              <span class="sync-last-time" id="sync-last-time"></span>
+            </div>
+          </div>
+          <div class="sync-buttons">
+            <button class="sync-btn google" id="btn-sync-google">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              <span>Google Drive</span>
+            </button>
+            <button class="sync-btn microsoft" id="btn-sync-onedrive">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+                <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
+                <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
+                <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
+              </svg>
+              <span>OneDrive</span>
+            </button>
+          </div>
+          <button class="sync-action-btn hidden" id="btn-sync-now">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>立即同步</span>
+          </button>
+          <button class="sync-disconnect-btn hidden" id="btn-sync-disconnect">中斷連接</button>
+        </div>
+
+        <div class="settings-group">
+          <h3 class="settings-group-title">資料管理</h3>
+          <div class="data-buttons">
+            <button class="data-btn" id="btn-export">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>匯出資料</span>
+            </button>
+            <button class="data-btn" id="btn-import">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>匯入資料</span>
+            </button>
+          </div>
+          <input type="file" id="import-file" accept=".json" class="hidden">
+        </div>
+
+        <div class="settings-group">
+          <h3 class="settings-group-title">關於</h3>
+          <p class="about-text">TabStash v1.0.0</p>
+          <p class="about-text secondary">一鍵收集分頁，跨裝置同步</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast hidden" id="toast">
+      <span id="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
